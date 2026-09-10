@@ -62,9 +62,10 @@ import '../css/gateway-api-plugin.css';
 
 interface GatewayCreatePageProps {
   onFormChange?: (resource: GatewayResource, isValid: boolean) => void;
+  isEmbedded?: boolean;
 }
 
-const GatewayCreatePage: React.FC<GatewayCreatePageProps> = ({ onFormChange }) => {
+const GatewayCreatePage: React.FC<GatewayCreatePageProps> = ({ onFormChange, isEmbedded }) => {
   const { t } = useTranslation('plugin__kuadrant-console-plugin');
   const [createView, setCreateView] = React.useState<'form' | 'yaml'>('form');
   const [activeNamespace] = useActiveNamespace();
@@ -1329,20 +1330,24 @@ const GatewayCreatePage: React.FC<GatewayCreatePageProps> = ({ onFormChange }) =
 
   return (
     <>
-      <Helmet>
-        <title data-test="example-page-title">
-          {create ? t('Create Gateway') : t('Edit Gateway')}
-        </title>
-      </Helmet>
+      {!isEmbedded && (
+        <Helmet>
+          <title data-test="example-page-title">
+            {create ? t('Create Gateway') : t('Edit Gateway')}
+          </title>
+        </Helmet>
+      )}
       <PageSection hasBodyWrapper={false}>
-        <div className="co-m-nav-title">
-          <Title headingLevel="h1">{create ? t('Create Gateway') : t('Edit Gateway')}</Title>
-          <p className="help-block co-m-pane__heading-help-text">
-            {t(
-              'A Gateway represents an instance of a service-traffic handling infrastructure by binding Listeners to a set of IP addresses.',
-            )}
-          </p>
-        </div>
+        {!isEmbedded && (
+          <div className="co-m-nav-title">
+            <Title headingLevel="h1">{create ? t('Create Gateway') : t('Edit Gateway')}</Title>
+            <p className="help-block co-m-pane__heading-help-text">
+              {t(
+                'A Gateway represents an instance of a service-traffic handling infrastructure by binding Listeners to a set of IP addresses.',
+              )}
+            </p>
+          </div>
+        )}
 
         {/* Loading state */}
         {isLoading ? (
@@ -1656,7 +1661,7 @@ const GatewayCreatePage: React.FC<GatewayCreatePageProps> = ({ onFormChange }) =
           </Tabs>
         )}
 
-        {!isLoading && createView === 'form' && (
+        {!isEmbedded && !isLoading && createView === 'form' && (
           <ActionGroup className="pf-u-mt-0">
             <KuadrantCreateUpdate
               validation={formValidation()}

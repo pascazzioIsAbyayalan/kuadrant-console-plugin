@@ -6,6 +6,10 @@
   display: none;
 }
 
+.kuadrant-mcp-embedded-form .pf-v6-c-tabs__list {
+  display: none;
+}
+
 .kuadrant-mcp-yaml-editor .yaml-editor__buttons {
   display: none;
 }

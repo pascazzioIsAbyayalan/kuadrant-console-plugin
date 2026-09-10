@@ -62,9 +62,10 @@ interface ParentReference {
 
 interface HTTPRouteCreatePageProps {
   onFormChange?: (resource: HTTPRouteResource, isValid: boolean) => void;
+  isEmbedded?: boolean;
 }
 
-const HTTPRouteCreatePage: React.FC<HTTPRouteCreatePageProps> = ({ onFormChange }) => {
+const HTTPRouteCreatePage: React.FC<HTTPRouteCreatePageProps> = ({ onFormChange, isEmbedded }) => {
   const { t } = useTranslation('plugin__kuadrant-console-plugin');
   const [createView, setCreateView] = React.useState<'form' | 'yaml'>('form');
   const [routeName, setRouteName] = React.useState('');
@@ -409,18 +410,22 @@ const HTTPRouteCreatePage: React.FC<HTTPRouteCreatePageProps> = ({ onFormChange 
 
   return (
     <>
-      <Helmet>
-        <title data-test="example-page-title">
-          {isEdit ? t('Edit HTTPRoute') : t('Create HTTPRoute')}
-        </title>
-      </Helmet>
+      {!isEmbedded && (
+        <Helmet>
+          <title data-test="example-page-title">
+            {isEdit ? t('Edit HTTPRoute') : t('Create HTTPRoute')}
+          </title>
+        </Helmet>
+      )}
       <PageSection hasBodyWrapper={false}>
-        <div className="co-m-nav-title">
-          <Title headingLevel="h1">{isEdit ? t('Edit HTTPRoute') : t('Create HTTPRoute')}</Title>
-          <p className="help-block co-m-pane__heading-help-text">
-            {t('HTTPRoute provides a way to route HTTP requests to backends.')}
-          </p>
-        </div>
+        {!isEmbedded && (
+          <div className="co-m-nav-title">
+            <Title headingLevel="h1">{isEdit ? t('Edit HTTPRoute') : t('Create HTTPRoute')}</Title>
+            <p className="help-block co-m-pane__heading-help-text">
+              {t('HTTPRoute provides a way to route HTTP requests to backends.')}
+            </p>
+          </div>
+        )}
         <Tabs
           activeKey={createView}
           onSelect={(_e, key) => handleViewSwitch(key as 'form' | 'yaml')}
@@ -620,20 +625,22 @@ const HTTPRouteCreatePage: React.FC<HTTPRouteCreatePageProps> = ({ onFormChange 
                   </FormHelperText>
                 </FormGroup>
 
-                <ActionGroup>
-                  <KuadrantCreateUpdate
-                    validation={formValidation()}
-                    model={httpRouteModel}
-                    resource={httpRouteObject}
-                    policyType="HTTPRoute"
-                    navigate={navigate}
-                    redirectPath={redirectPath}
-                    update={isEdit}
-                  />
-                  <Button variant="link" onClick={() => handleCancel(navigate)}>
-                    {t('Cancel')}
-                  </Button>
-                </ActionGroup>
+                {!isEmbedded && (
+                  <ActionGroup>
+                    <KuadrantCreateUpdate
+                      validation={formValidation()}
+                      model={httpRouteModel}
+                      resource={httpRouteObject}
+                      policyType="HTTPRoute"
+                      navigate={navigate}
+                      redirectPath={redirectPath}
+                      update={isEdit}
+                    />
+                    <Button variant="link" onClick={() => handleCancel(navigate)}>
+                      {t('Cancel')}
+                    </Button>
+                  </ActionGroup>
+                )}
               </Form>
             </PageSection>
           </Tab>

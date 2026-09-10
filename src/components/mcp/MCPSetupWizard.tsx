@@ -366,6 +366,7 @@ const MCPSetupWizard: React.FC = () => {
                 <CardBody>
                   <div className="kuadrant-mcp-embedded-form">
                     <GatewayCreatePage
+                      isEmbedded
                       onFormChange={(resource, isValid) => {
                         setNewGatewayResource(resource);
                         setNewGatewayValid(isValid);
@@ -484,6 +485,7 @@ const MCPSetupWizard: React.FC = () => {
                 <CardBody>
                   <div className="kuadrant-mcp-embedded-form">
                     <HTTPRouteCreatePage
+                      isEmbedded
                       onFormChange={(resource, isValid) => {
                         setNewRouteResource(resource);
                         setNewRouteValid(isValid);
