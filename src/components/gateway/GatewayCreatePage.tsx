@@ -69,7 +69,11 @@ interface GatewayCreatePageProps {
   initialResource?: GatewayResource;
 }
 
-const GatewayCreatePage: React.FC<GatewayCreatePageProps> = ({ onFormChange, isEmbedded, initialResource }) => {
+const GatewayCreatePage: React.FC<GatewayCreatePageProps> = ({
+  onFormChange,
+  isEmbedded,
+  initialResource,
+}) => {
   const { t } = useTranslation('plugin__kuadrant-console-plugin');
   const [createView, setCreateView] = React.useState<'form' | 'yaml'>('form');
   const [activeNamespace] = useActiveNamespace();
