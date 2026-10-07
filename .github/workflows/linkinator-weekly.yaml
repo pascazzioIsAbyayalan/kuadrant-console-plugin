@@ -22,3 +22,4 @@ jobs:
       - uses: JustinBeckwith/linkinator-action@12f7a61a56e5e75d659f0dfd6357e2d852ede281 # ratchet:JustinBeckwith/linkinator-action@v2
         with:
           paths: "**/*.md"
+          config: linkinator.config.json
