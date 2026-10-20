@@ -45,3 +45,6 @@ jobs:
         if: steps.changed.outputs.paths != ''
         with:
           paths: ${{ steps.changed.outputs.paths }}
+
+          config: linkinator.config.json
+          
