@@ -34,12 +34,55 @@ jobs:
         env: 
           LINKINATOR_RESULTS: ${{ steps.linkinator.outputs.results }}
         run: |
-          echo "This works I guess"
-          echo "$LINKINATOR_RESULTS"
+          echo "$LINKINATOR_RESULTS" | node -e "
+            const r = JSON.parse(require('fs').readFileSync(0, 'utf8'));
+            const p = r.links.filter(l => l.state === 'OK').length;
+            const b = r.links.filter(l => l.state === 'BROKEN').length;
+            const s = r.links.filter(l => l.state === 'SKIPPED').length;
+            console.log('summary=Total: ' + r.links.length + ' | ✅ ' + p + ' | ❌ ' + b + ' | ⏭️ ' + s);
+          " >> "$GITHUB_OUTPUT"
 
-      - name: Hate GH Actions
+      - name: Check for existing open issue
         if: steps.linkinator.outcome == 'failure'
-        id: hate
-        run: | 
-          exit 1
-      
+        id: existing
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          EXISTING=$(gh issue list --label "linkinator-failure" --state open --json number --limit 1 -q '.[0].number // empty')
+          echo "number=$EXISTING" >> "$GITHUB_OUTPUT"
+
+      - name: Ensure labels exist
+        if: steps.linkinator.outcome == 'failure' && steps.existing.outputs.number == ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          for label in linkinator-failure documentation; do
+            gh label create "$label" --force 2>/dev/null || true
+          done
+
+      - name: Create or update issue
+        if: steps.linkinator.outcome == 'failure'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ -z "${{ steps.existing.outputs.number }}" ]; then
+            # No existing issue - create new one
+            gh issue create \
+              --title "Weekly Documentation Link Check Failed — $(date -u +%Y-%m-%d)" \
+              --label "linkinator-failure" \
+              --label "documentation" \
+              --body "**${{ steps.stats.outputs.summary }}**
+
+              See full broken link details in the [workflow run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})."
+          else
+            # Existing issue - add comment with updated stats
+            gh issue comment "${{ steps.existing.outputs.number }}" \
+              --body "**Updated $(date -u +%Y-%m-%d):** ${{ steps.stats.outputs.summary }}
+
+          See latest details in the [workflow run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})."
+          fi
+
+      - name: Fail workflow if links broken
+        if: steps.linkinator.outcome == 'failure'
+        run: exit 1
+        
