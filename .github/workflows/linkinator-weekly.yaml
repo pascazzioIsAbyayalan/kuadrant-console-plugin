@@ -36,4 +36,10 @@ jobs:
         run: |
           echo "This works I guess"
           echo "$LINKINATOR_RESULTS"
+
+      - name: Hate GH Actions
+        if: steps.linkinator.outcome == 'failure'
+        id: hate
+        run: | 
+          exit 1
       
