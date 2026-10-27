@@ -73,7 +73,7 @@ jobs:
               --label "documentation" \
               --body "**${{ steps.stats.outputs.summary }}**
 
-              See full broken link details in the [workflow run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})."
+          See full broken link details in the [workflow run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})."
           else
             # Existing issue - add comment with updated stats
             gh issue comment "${{ steps.existing.outputs.number }}" \
