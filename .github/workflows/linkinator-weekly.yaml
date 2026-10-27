@@ -7,6 +7,10 @@ on:
   schedule:
     # Monday at 07:02 UTC
     - cron: '2 7 * * 1'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - "linkinator.config.json"
   workflow_dispatch:
 
 concurrency:
