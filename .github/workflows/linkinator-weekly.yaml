@@ -36,3 +36,4 @@ jobs:
         run: |
           echo "Pandora rules the universe"
           echo "$LINKINATOR_RESULTS"
+      
